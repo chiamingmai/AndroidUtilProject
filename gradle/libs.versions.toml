@@ -17,9 +17,11 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
+rxjava = { module = "io.reactivex.rxjava3:rxjava", version = "3.1.8" }
+rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version = "3.0.2" }
+rxkotlin = { module = "io.reactivex.rxjava3:rxkotlin", version = "3.0.1" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
-
