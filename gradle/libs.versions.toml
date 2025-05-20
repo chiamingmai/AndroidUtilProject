@@ -20,6 +20,8 @@ androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterfa
 rxjava = { module = "io.reactivex.rxjava3:rxjava", version = "3.1.8" }
 rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version = "3.0.2" }
 rxkotlin = { module = "io.reactivex.rxjava3:rxkotlin", version = "3.0.1" }
+play-services-maps = { module = "com.google.android.gms:play-services-maps", version = "19.2.0" }
+android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version = "3.9.0" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
