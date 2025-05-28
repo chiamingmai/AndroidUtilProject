@@ -42,6 +42,8 @@ dependencies {
     implementation(libs.rxkotlin)
     implementation(libs.play.services.maps)
     implementation(libs.android.maps.utils)
+    implementation(libs.xxpermissions)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
