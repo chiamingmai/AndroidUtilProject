@@ -11,6 +11,8 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.Companion.ACTION_SYSTEM_FALLBACK_PICK_IMAGES
 import androidx.annotation.StringRes
 import androidx.documentfile.provider.DocumentFile
 import com.google.android.material.snackbar.BaseTransientBottomBar.Duration
@@ -67,10 +69,11 @@ fun Context.deleteFile(uri: Uri?) {
 /** 是否能開啟Intent內容 */
 fun Context.isIntentAvailable(intent: Intent): Boolean =
     try {
-        intent.resolveActivityInfo(
-            packageManager,
-            PackageManager.MATCH_DEFAULT_ONLY
-        ) != null
+        val flag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
+            PackageManager.MATCH_DEFAULT_ONLY or PackageManager.MATCH_SYSTEM_ONLY
+        else PackageManager.MATCH_DEFAULT_ONLY
+
+        intent.resolveActivityInfo(packageManager, flag) != null
     } catch (e: Exception) {
         e.printStackTrace()
         false
@@ -122,3 +125,15 @@ fun Context.showLongToast(@StringRes messageId: Int) = showToast(messageId, Toas
  * @param message 訊息
  */
 fun Context.showLongToast(message: CharSequence) = showToast(message, Toast.LENGTH_LONG)
+
+/**
+ * Check if the current device has support for the photo picker by checking the running
+ * Android version, the SDK extension version or the picker provided by
+ * a system app implementing [ACTION_SYSTEM_FALLBACK_PICK_IMAGES].
+ */
+fun Context.isPhotoPickerAvailable(): Boolean =
+    ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(this) ||
+            isIntentAvailable(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                type = "*/*"
+                putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
+            })
