@@ -1,6 +1,6 @@
 @file:JvmName("FileExt")
 
-package com.github.chiamingmai.androidutil.extensions
+package com.github.chiamingmai.androidutil.io
 
 import java.io.File
 import java.io.FileInputStream

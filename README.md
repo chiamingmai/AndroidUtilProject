@@ -9,7 +9,6 @@ extensions/
 * ActivityExt
 * BundleExt
 * ContextExt
-* FileExt
 * FragmentExt
 * IntentExt
 * MapExt
@@ -18,8 +17,14 @@ extensions/
 * ViewExt
 * ViewModelExt
 
+io/
+
+* FileExt
+* FileUtils
+
 utils/
 
 * GoogleMapUtils
 * NotificationUtils
 * PermissionUtils
+* StringMaskUtils
