@@ -15,6 +15,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.Companion.ACTION_SYSTEM_FALLBACK_PICK_IMAGES
 import androidx.annotation.StringRes
 import androidx.documentfile.provider.DocumentFile
+import com.github.chiamingmai.androidutil.io.deleteAllFiles
 import com.google.android.material.snackbar.BaseTransientBottomBar.Duration
 import java.io.File
 
