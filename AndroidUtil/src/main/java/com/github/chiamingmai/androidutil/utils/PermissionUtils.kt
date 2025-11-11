@@ -3,32 +3,85 @@ package com.github.chiamingmai.androidutil.utils
 import android.Manifest
 import android.content.Context
 import android.os.Build
-import android.os.Environment
 import com.github.chiamingmai.androidutil.extensions.isPermissionGranted
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
 
 /** 權限功能工具 */
 object PermissionUtils {
-    /** 外部儲存權限列表
+    /** 讀取媒體類型 */
+    enum class ReadMediaType {
+        /** 圖片檔案 */
+        IMAGE,
+
+        /** 影片檔案 */
+        VIDEO,
+
+        /** 聲音檔案 */
+        AUDIO
+    }
+
+    /** 取得媒體存取權限
      *
-     * - 欲將檔案儲存在[Environment.getExternalStoragePublicDirectory]+[Environment.DIRECTORY_DOWNLOADS]路徑，需要請求[Manifest.permission.WRITE_EXTERNAL_STORAGE]權限，否則無法儲存；
-     * 其餘路徑如[Environment.DIRECTORY_PICTURES]則可以不用請求[Manifest.permission.WRITE_EXTERNAL_STORAGE]權限
+     * - 欲將檔案儲存在[android.os.Environment.getExternalStoragePublicDirectory]+[android.os.Environment.DIRECTORY_DOWNLOADS]路徑，需要請求[android.Manifest.permission.WRITE_EXTERNAL_STORAGE]權限，否則無法儲存；
+     * 其餘路徑如[android.os.Environment.DIRECTORY_PICTURES]則可以不用請求[android.Manifest.permission.WRITE_EXTERNAL_STORAGE]權限
      *
      * - 若targetSDK >= 33, 需配合將request中設定 uncheck = true, 避免套件報錯
-     * */
-    val storagePermissions: List<String> = mutableListOf<String>().apply {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            add(Manifest.permission.READ_MEDIA_IMAGES)
-            add(Manifest.permission.READ_MEDIA_VIDEO)
-            add(Manifest.permission.READ_MEDIA_AUDIO)
-        } else {
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
-                //小於等於 Android 10需詢問寫入權限
-                add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+     *
+     * [Partial photo/video access](https://developer.android.com/about/versions/14/changes/partial-photo-video-access?hl=zh-tw#app-gallery-picker)
+     */
+    @JvmStatic
+    fun getReadMediaPermissions(vararg types: ReadMediaType) =
+        getReadMediaPermissions(types.toList())
+
+    /** 取得媒體存取權限
+     *
+     * - 欲將檔案儲存在[android.os.Environment.getExternalStoragePublicDirectory]+[android.os.Environment.DIRECTORY_DOWNLOADS]路徑，需要請求[android.Manifest.permission.WRITE_EXTERNAL_STORAGE]權限，否則無法儲存；
+     * 其餘路徑如[android.os.Environment.DIRECTORY_PICTURES]則可以不用請求[android.Manifest.permission.WRITE_EXTERNAL_STORAGE]權限
+     *
+     * - 若targetSDK >= 33, 需配合將request中設定 uncheck = true, 避免套件報錯
+     *
+     * [Partial photo/video access](https://developer.android.com/about/versions/14/changes/partial-photo-video-access?hl=zh-tw#app-gallery-picker)
+     */
+    @JvmStatic
+    fun getReadMediaPermissions(types: List<ReadMediaType>): List<String> {
+        val permissions = mutableListOf<String>()
+
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
+                types.distinct().forEach { type ->
+                    permissions.add(
+                        when (type) {
+                            ReadMediaType.IMAGE -> Manifest.permission.READ_MEDIA_IMAGES
+                            ReadMediaType.VIDEO -> Manifest.permission.READ_MEDIA_VIDEO
+                            ReadMediaType.AUDIO -> Manifest.permission.READ_MEDIA_AUDIO
+                        }
+                    )
+                }
+                permissions.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
             }
-            add(Manifest.permission.READ_EXTERNAL_STORAGE)
+
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                types.distinct().forEach { type ->
+                    permissions.add(
+                        when (type) {
+                            ReadMediaType.IMAGE -> Manifest.permission.READ_MEDIA_IMAGES
+                            ReadMediaType.VIDEO -> Manifest.permission.READ_MEDIA_VIDEO
+                            ReadMediaType.AUDIO -> Manifest.permission.READ_MEDIA_AUDIO
+                        }
+                    )
+                }
+            }
+
+            else -> {
+                if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) {
+                    //小於等於 Android 10需詢問寫入權限
+                    permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                }
+                permissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
         }
+        return permissions
     }
 
     /** 前往應用程式設定頁 */
