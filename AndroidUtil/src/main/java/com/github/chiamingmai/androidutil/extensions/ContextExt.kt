@@ -6,6 +6,8 @@ import android.app.Notification
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
@@ -135,6 +137,37 @@ fun Context.showLongToast(message: CharSequence) = showToast(message, Toast.LENG
 fun Context.isPhotoPickerAvailable(): Boolean =
     ActivityResultContracts.PickVisualMedia.isPhotoPickerAvailable(this) ||
             isIntentAvailable(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                type = "*/*"
+                this.type = "*/*"
                 putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("image/*", "video/*"))
             })
+
+/** Check if the device has at least one camera. */
+fun Context.isAnyCameraAvailable(): Boolean =
+    packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)
+
+/** Check if the device has a front facing camera. */
+fun Context.isFrontCameraAvailable(): Boolean =
+    packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)
+//isCameraAvailableInternal(CameraCharacteristics.LENS_FACING_FRONT)
+
+/** Check if the device has a camera facing away from the screen. */
+fun Context.isBackCameraAvailable(): Boolean =
+    packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA)
+//isCameraAvailableInternal(CameraCharacteristics.LENS_FACING_BACK)
+
+private fun Context.isCameraAvailableInternal(lensFacing: Int): Boolean {
+    val cameraManager: CameraManager =
+        getSystemService(Context.CAMERA_SERVICE) as? CameraManager ?: return false
+    try {
+        cameraManager.cameraIdList.forEach { id ->
+            val characteristics = cameraManager.getCameraCharacteristics(id)
+            val facing = characteristics.get(CameraCharacteristics.LENS_FACING)
+            if (facing == lensFacing) {
+                return true
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return false
+}
