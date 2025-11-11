@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.PickVisualMedia.Companion.ACTION_SYSTEM_FALLBACK_PICK_IMAGES
 import androidx.annotation.StringRes
+import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import com.github.chiamingmai.androidutil.io.deleteAllFiles
 import com.google.android.material.snackbar.BaseTransientBottomBar.Duration
@@ -50,6 +51,10 @@ fun Context.isNetworkAvailable(): Boolean {
         activeNetworkInfo?.isConnected == true
     }
 }
+
+/** Check if this permission is granted or not. */
+fun Context.isPermissionGranted(permission: String): Boolean =
+    ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED
 
 /** 刪除檔案 */
 fun Context.deleteFile(uri: Uri?) {

@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.os.Build
 import android.os.Environment
+import com.github.chiamingmai.androidutil.extensions.isPermissionGranted
 import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.XXPermissions
 
@@ -96,4 +97,9 @@ object PermissionUtils {
         uncheck: Boolean = false,
         callback: Callback
     ) = request(context, listOf(permissions), uncheck, callback)
+
+    /** Check if this permission is granted or not. */
+    @JvmStatic
+    fun isPermissionGranted(context: Context, permission: String): Boolean =
+        context.isPermissionGranted(permission)
 }

@@ -51,6 +51,10 @@ fun Fragment.showLongToast(message: CharSequence) =
 fun Fragment.getColor(@ColorRes colorRes: Int): Int =
     ContextCompat.getColor(requireContext(), colorRes)
 
+/** Check if this permission is granted or not. */
+fun Fragment.isPermissionGranted(permission: String): Boolean =
+    requireContext().isPermissionGranted(permission)
+
 /**
  * Check if the current device has support for the photo picker by checking the running
  * Android version, the SDK extension version or the picker provided by
